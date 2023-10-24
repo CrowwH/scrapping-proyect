@@ -1,5 +1,6 @@
 package com.scrapping.scrapping;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,11 +13,21 @@ public class ScrappingServeImpl implements ScrappingService {
 
     @Override
     public List<Helbidea> scrap(Helbidea helbidea) {
-        Document doc = Jsoup.connect(url).get();
-		
-		doc.select("a")
-			.forEach(a -> System.out.println(a.html() + ";" + a.attr("href")));
-        return null;
+        
+        List<Helbidea> emaitza = new ArrayList<>();
+
+        Document doc;
+        try {
+            doc = Jsoup.connect(helbidea.getHref()).get();
+
+            doc.select("a")
+                .forEach(a -> emaitza.add(new Helbidea(a.attr("href"), a.html())));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return emaitza;
     }
 
     @Override
